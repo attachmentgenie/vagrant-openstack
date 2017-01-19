@@ -1,0 +1,10 @@
+---
+nodes:
+    - name: centos7
+      hostname: node1.openstack.vagrant
+      box: bento/centos-7.3
+      ip: 192.168.58.42
+      ports:
+        - guest: 22
+          host: 5842
+virtualbox_group: '/Vagrant/openstack'
