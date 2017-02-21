@@ -1,10 +1,24 @@
 ---
 nodes:
     - name: centos7
+      cpus: 4
+      memory: 10240
       hostname: node1.openstack.vagrant
       box: bento/centos-7.3
       ip: 192.168.58.42
       ports:
         - guest: 22
           host: 5842
+      provision_shell: |
+                    sudo systemctl disable firewalld
+                    sudo systemctl stop firewalld
+                    sudo systemctl disable NetworkManager
+                    sudo systemctl stop NetworkManager
+                    sudo systemctl enable network
+                    sudo systemctl start network
+                    sudo yum install -y centos-release-openstack-newton
+                    sudo yum update -y
+                    sudo yum install -y openstack-packstack
+                    sudo packstack --allinone
+puppet_version: 3.8.7
 virtualbox_group: '/Vagrant/openstack'

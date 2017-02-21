@@ -143,7 +143,7 @@ Vagrant.configure("2") do |config|
             if node["hiera_config_path"]
               puppet.hiera_config_path = node["hiera_config_path"]
             else
-              puppet.hiera_config_path = "#{environment}/hiera.yaml"
+              puppet.hiera_config_path = "hiera.yaml"
             end
           end
         end
