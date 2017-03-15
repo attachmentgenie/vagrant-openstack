@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
       target = @machine.config.vm.hostname.to_s
       puppetmaster = "puppetmaster"
       if target != puppetmaster
-        system("vagrant ssh #{puppetmaster} -c 'sudo /usr/bin/puppet cert clean #{target}'" )
+        system("vagrant ssh #{puppetmaster} -c 'sudo /opt/puppetlabs/bin/puppet cert clean #{target}'" )
       end
     end
   end
@@ -143,7 +143,7 @@ Vagrant.configure("2") do |config|
             if node["hiera_config_path"]
               puppet.hiera_config_path = node["hiera_config_path"]
             else
-              puppet.hiera_config_path = "hiera.yaml"
+              puppet.hiera_config_path = "#{environment}/hiera.yaml"
             end
           end
         end
