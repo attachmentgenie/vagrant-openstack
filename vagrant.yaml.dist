@@ -10,15 +10,32 @@ nodes:
         - guest: 22
           host: 5842
       provision_shell: |
-                    sudo systemctl disable firewalld
-                    sudo systemctl stop firewalld
-                    sudo systemctl disable NetworkManager
-                    sudo systemctl stop NetworkManager
-                    sudo systemctl enable network
-                    sudo systemctl start network
-                    sudo yum install -y centos-release-openstack-newton
-                    sudo yum update -y
-                    sudo yum install -y openstack-packstack
-                    sudo packstack --allinone
-puppet_version: 3.8.7
+                    systemctl disable firewalld
+                    systemctl stop firewalld
+                    systemctl disable NetworkManager
+                    systemctl stop NetworkManager
+                    systemctl enable network
+                    systemctl start network
+                    yum remove -y puppet
+                    rm -rf /etc/yum.repos.d/puppetlabs-pc1.repo
+                    yum update -y
+                    yum install -y centos-release-openstack-ocata
+                    yum update -y
+                    yum install -y openstack-packstack
+                    packstack --answer-file=/shared/answers.txt
+                    cp /shared/ifcfg-br-ex /etc/sysconfig/network-scripts/ifcfg-br-ex
+                    cp /shared/ifcfg-enp0s8 /etc/sysconfig/network-scripts/ifcfg-enp0s8
+                    service network restart
+                    neutron subnet-create --name public_subnet --enable_dhcp=False --allocation-pool=start=192.168.58.10,end=192.168.58.20 \
+                                            --gateway=192.168.58.1 --dns-nameserver=192.168.1.1 external_network 192.168.58.0/24
+                    neutron router-create router1
+                    neutron router-gateway-set router1 external_network
+                    neutron net-create private_network
+                    neutron subnet-create --name private_subnet private_network 192.168.100.0/24
+                    neutron router-interface-add router1 private_subnet
+                    curl http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img | glance \
+                             image-create --name='cirros image' --visibility=public --container-format=bare --disk-format=qcow2
+      synced_folders:
+        - src: 'shared'
+          dst: '/shared'
 virtualbox_group: '/Vagrant/openstack'
